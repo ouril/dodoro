@@ -10,25 +10,43 @@ from model_utils.models import TimeStampedModel
 from phonenumber_field.modelfields import PhoneNumberField
 from djmoney.models.fields import MoneyField
 
-from django.db import models
+from django.conf import settings
 
 
 class ABSComercia(TimeStampedModel):
     name = models.CharField(max_length=255, verbose_name="Name", unique=True)
-    description = models.TextField(verbose_name="Description")
+    description = models.TextField(verbose_name="Description", blank=True, default="")
 
     def __str__(self):
         return self.name
 
 
 class Company(ABSComercia):
-    # logo ???
-    pass
+    # TODO: add upload_path
+    logo = models.ImageField(null=True, verbose_name="logo")
 
 
 class Shop(ABSComercia):
-    # logo ???
-    company = models.ForeignKey(Company, related_name="shop", verbose_name="Company")
+    # TODO: add upload path
+    logo = models.ImageField()
+    company = models.ForeignKey(
+        Company,
+        related_name="shop",
+        verbose_name="Company",
+        on_delete=models.CASCADE
+    )
+
+
+class Category(ABSComercia):
+    pass
+
+
+class Unit(ABSComercia):
+    pass
+
+
+class ProductType(ABSComercia):
+    unit = models.ForeignKey(Unit, on_delete=models.DO_NOTHING)
 
 
 class Product(TimeStampedModel):
@@ -39,31 +57,58 @@ class Product(TimeStampedModel):
     )
     name = models.CharField(max_length=255, verbose_name="Product name")
     info = models.TextField(verbose_name='Discription of product', blank=True)
-    company = models.ForeignKey(Company, related_name="product", verbose_name="Company")
+    company = models.ForeignKey(
+        Company,
+        related_name="product",
+        verbose_name="Company",
+        on_delete=models.CASCADE
+    )
+    category = models.ForeignKey(
+        Category,
+        verbose_name="Category",
+        on_delete=models.DO_NOTHING
+    )
+    product_type = models.ForeignKey(
+        ProductType,
+        verbose_name="type of product",
+        on_delete=models.DO_NOTHING
+    )
+    article = models.CharField(max_length=8, default="")
 
-    @property
-    def article(self):
+    def __str__(self):
+        return self.name
+
+    def set_article(self):
         # TODO: create function to build article
-        return self.id[:8]
+        self.article = str(self.id)[::5]
+        return self.article
 
 
 class Store(TimeStampedModel):
-    shop = models.ForeignKey(Shop, verbose_name="Shop", related_name="store")
+    shop = models.ForeignKey(
+        Shop,
+        verbose_name="Shop",
+        related_name="store",
+        on_delete=models.CASCADE
+    )
     product = models.ForeignKey(Product, verbose_name="Product", related_name="store")
     stock = models.PositiveIntegerField(verbose_name="Stock", default=0, null=True)
 
+    def __str__(self):
+        return "Shop {} store".format(self.shop.name)
+
 
 class ShopContacts(TimeStampedModel):
-    pass
-
-
-class ProductCategory(models.Model):
-    pass
-
-
-class ProductType(models.Model):
-    # TODO: build types with count by
-    pass
+    shop = models.ForeignKey(
+        Shop,
+        related_name="contacts",
+        verbose_name="Shop",
+        on_delete=models.CASCADE
+    )
+    addr = models.CharField(max_length=255, verbose_name="contacts")
+    phone = PhoneNumberField()
+    email = models.EmailField()
+    # TODO: Add params
 
 
 class Price(TimeStampedModel):
