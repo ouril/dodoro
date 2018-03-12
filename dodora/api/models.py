@@ -2,6 +2,7 @@ import os.path
 import uuid
 from decimal import Decimal
 from datetime import timedelta
+from django.contrib.auth.models import User
 
 from django.db import models
 
@@ -47,6 +48,7 @@ class Unit(ABSComercia):
 
 class ProductType(ABSComercia):
     unit = models.ForeignKey(Unit, on_delete=models.DO_NOTHING)
+    min_package = models.IntegerField(default=1, verbose_name="Minimum in package")
 
 
 class Product(TimeStampedModel):
@@ -117,15 +119,33 @@ class Price(TimeStampedModel):
     # TODO: Finish with deferent money
 
 
-class Customer(TimeStampedModel):
+class Customer(User):
     pass
 
 
-class ProductRating(TimeStampedModel):
-    pass
+class Rating(TimeStampedModel):
+    horribly = 1
+    bad = 2
+    tolerably = 3
+    good = 4
+    wonderful = 5
+    RATING = (
+        (horribly, 1),
+        (bad, 2),
+        (tolerably, 3),
+        (good, 4),
+        (wonderful, 5)
+    )
+
+    rating = models.SmallIntegerField(choices=RATING, verbose_name="rating")
+    customer = models.ForeignKey(Customer, related_name="product_rating", verbose_name="Customer")
 
 
-class ShopRating(TimeStampedModel):
-    pass
+class ProductRating(Rating):
+    product = models.ForeignKey(Product, related_name="rating", verbose_name="Product")
+
+
+class ShopRating(Rating):
+    shop = models.ForeignKey(Shop, related_name="rating", verbose_name="Shop")
 
 
