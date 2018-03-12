@@ -2,8 +2,8 @@ import os.path
 import uuid
 from decimal import Decimal
 from datetime import timedelta
-from django.contrib.auth.models import User
 
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 from rest_framework.exceptions import ValidationError
@@ -25,11 +25,13 @@ class ABSComercia(TimeStampedModel):
 class Company(ABSComercia):
     # TODO: add upload_path
     logo = models.ImageField(null=True, verbose_name="logo")
+    is_active = models.BooleanField(verbose_name="Is active", default=False)
 
 
 class Shop(ABSComercia):
     # TODO: add upload path
     logo = models.ImageField()
+    is_opened = models.BooleanField(verbose_name="Is shop open", default=True)
     company = models.ForeignKey(
         Company,
         related_name="shop",
@@ -119,8 +121,8 @@ class Price(TimeStampedModel):
     # TODO: Finish with deferent money
 
 
-class Customer(User):
-    pass
+class Customer(AbstractUser):
+    phone = PhoneNumberField(verbose_name='Customer number', unique=True)
 
 
 class Rating(TimeStampedModel):
@@ -138,14 +140,30 @@ class Rating(TimeStampedModel):
     )
 
     rating = models.SmallIntegerField(choices=RATING, verbose_name="rating")
-    customer = models.ForeignKey(Customer, related_name="product_rating", verbose_name="Customer")
+    customer = models.ForeignKey(
+        Customer,
+        related_name="product_rating",
+        verbose_name="Customer",
+        on_delete=models.CASCADE
+
+    )
 
 
 class ProductRating(Rating):
-    product = models.ForeignKey(Product, related_name="rating", verbose_name="Product")
+    product = models.ForeignKey(
+        Product,
+        related_name="rating",
+        verbose_name="Product",
+        on_delete=models.CASCADE
+    )
 
 
 class ShopRating(Rating):
-    shop = models.ForeignKey(Shop, related_name="rating", verbose_name="Shop")
+    shop = models.ForeignKey(
+        Shop,
+        related_name="rating",
+        verbose_name="Shop",
+        on_delete=models.CASCADE
+    )
 
 
