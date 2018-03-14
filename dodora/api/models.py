@@ -78,6 +78,9 @@ class Product(TimeStampedModel):
         on_delete=models.DO_NOTHING
     )
     article = models.CharField(max_length=8, default="")
+    # TODO: finished that thing with the money
+    money = MoneyField()
+
 
     def __str__(self):
         return self.name
@@ -115,9 +118,8 @@ class ShopContacts(TimeStampedModel):
     # TODO: Add params
 
 
-class Price(TimeStampedModel):
     product = models.ForeignKey(Product, related_name="price")
-    money = MoneyField()
+
     # TODO: Finish with deferent money
 
 
@@ -167,3 +169,16 @@ class ShopRating(Rating):
     )
 
 
+class ProductGroup(models.Model):
+    company = models.ForeignKey(
+        Company,
+        related_name="prod_group",
+        verbose_name="Company of group",
+        on_delete=models.CASCADE
+    )
+    product = models.ManyToManyField(
+        Product,
+        related_name="group",
+    )
+    name = models.CharField(max_length=64, verbose_name="Name of group")
+    description = models.TextField(blank=True, default="", verbose_name="Description of group")
