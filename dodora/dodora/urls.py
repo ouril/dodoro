@@ -14,10 +14,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path
+from django.conf.urls import url, include
+from django.urls import path
+from api.urls import urlpatterns as api_urls
 from rest_framework_jwt.views import refresh_jwt_token
+from django.urls import reverse_lazy
+from django.views.generic.base import RedirectView
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    re_path(r'api-token-refresh/', refresh_jwt_token)
+    url(r'admin/', admin.site.urls),
+    url(r'api-token-refresh/', refresh_jwt_token),
+    url(r'^api/', include(api_urls)),
+    url(r'^$', RedirectView.as_view(url=reverse_lazy('api-root'), permanent=False))
 ]

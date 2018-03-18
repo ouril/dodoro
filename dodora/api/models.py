@@ -3,7 +3,7 @@ import uuid
 from decimal import Decimal
 from datetime import timedelta
 
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser
 from django.db import models
 
 from rest_framework.exceptions import ValidationError
@@ -14,7 +14,7 @@ from djmoney.models.fields import MoneyField
 from django.conf import settings
 
 
-class ABSComercia(TimeStampedModel):
+class Comercia(TimeStampedModel):
     name = models.CharField(max_length=255, verbose_name="Name", unique=True)
     description = models.TextField(verbose_name="Description", blank=True, default="")
 
@@ -22,17 +22,17 @@ class ABSComercia(TimeStampedModel):
         return self.name
 
 
-class Company(ABSComercia):
+class Company(Comercia):
     # TODO: add upload_path
     logo = models.ImageField(null=True, verbose_name="logo")
     is_active = models.BooleanField(verbose_name="Is active", default=False)
 
 
-class Shop(ABSComercia):
+class Shop(Comercia):
     # TODO: add upload path
     logo = models.ImageField()
     is_opened = models.BooleanField(verbose_name="Is shop open", default=True)
-    company = models.ForeignKey(
+    company_shop = models.ForeignKey(
         Company,
         related_name="shop",
         verbose_name="Company",
@@ -40,16 +40,16 @@ class Shop(ABSComercia):
     )
 
 
-class Category(ABSComercia):
+class Category(Comercia):
     pass
 
 
-class Unit(ABSComercia):
+class Unit(Comercia):
     pass
 
 
-class ProductType(ABSComercia):
-    unit = models.ForeignKey(Unit, on_delete=models.DO_NOTHING)
+class ProductType(Comercia):
+    unit_product = models.ForeignKey(Unit, on_delete=models.DO_NOTHING)
     min_package = models.IntegerField(default=1, verbose_name="Minimum in package")
 
 
@@ -79,7 +79,7 @@ class Product(TimeStampedModel):
     )
     article = models.CharField(max_length=8, default="")
     # TODO: finished that thing with the money
-    money = MoneyField()
+    prise = MoneyField(max_digits=10, decimal_places=2)
 
 
     def __str__(self):
@@ -98,7 +98,7 @@ class Store(TimeStampedModel):
         related_name="store",
         on_delete=models.CASCADE
     )
-    product = models.ForeignKey(Product, verbose_name="Product", related_name="store")
+    product = models.ForeignKey(Product, verbose_name="Product", related_name="store", on_delete=models.CASCADE)
     stock = models.PositiveIntegerField(verbose_name="Stock", default=0, null=True)
 
     def __str__(self):
@@ -118,12 +118,12 @@ class ShopContacts(TimeStampedModel):
     # TODO: Add params
 
 
-    product = models.ForeignKey(Product, related_name="price")
+    product = models.ForeignKey(Product, related_name="price", on_delete=models.CASCADE)
 
     # TODO: Finish with deferent money
 
 
-class Customer(AbstractUser):
+class Customer(AbstractBaseUser):
     phone = PhoneNumberField(verbose_name='Customer number', unique=True)
 
 

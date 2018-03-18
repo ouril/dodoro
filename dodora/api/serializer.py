@@ -1,4 +1,14 @@
-from .models import *
+from .models import (
+    Product,
+    Shop,
+    ShopRating,
+    Company,
+    Customer,
+    ProductRating,
+    Category
+
+
+)
 from rest_framework import serializers
 
 
@@ -36,5 +46,9 @@ class ProductRatingSerializer(serializers.ModelSerializer):
         model = ProductRating
         fields = '__all__'
 
+class CompanySerializer(serializers.ModelSerializer):
 
+    class Meta:
+        model = Company
+        fields = "__all__"
 

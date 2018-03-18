@@ -1,23 +1,23 @@
 import uuid
 
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 
 from model_utils.models import TimeStampedModel
 from phonenumber_field.modelfields import PhoneNumberField
 from djmoney.models.fields import MoneyField
 
-from dodora.api.models import Company
+from api.models import Company
 
 
-class User(AbstractUser):
+class AdminUser(User):
     CHOICE = (
         ('EM', 'Employer'),
         ('AD', 'Administrator'),
         ('OW', 'Owner')
     )
 
-    id = models.UUIDField(
+    uuid_id = models.UUIDField(
         primary_key=True,
         default=uuid.uuid4,
         editable=False

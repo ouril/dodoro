@@ -26,7 +26,7 @@ SECRET_KEY = '%f^epufn!#58m!0v#a7p*wp$x*-(#^o8-ah4+lc=m0!77m(rv$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -38,7 +38,18 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'api',
+    'auth_users',
+    'rest_framework',
+    'rest_framework_jwt',
+    'djmoney',
+    'corsheaders',
+    'phonenumber_field',
+    'django_extensions',
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -48,15 +59,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'api',
-    'auth',
-    'rest_framework',
-    'rest_framework_jwt',
-    'djmoney',
-    'corsheaders',
-    'phonenumber_field',
-    'django-model-utils',
-    'django_extensions'
+
+
 ]
 
 ROOT_URLCONF = 'dodora.urls'
