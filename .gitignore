@@ -15,6 +15,6 @@ bin/
 include/
 lib/
 local/
-
+db.sqlite3
 !.gitignore
 !.travis.yml
