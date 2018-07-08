@@ -5,23 +5,17 @@ from .models import (
     Company,
     Customer,
     ProductRating,
-    Category
+    Category,
+    ProductImage
 
 
 )
 from rest_framework import serializers
 
 
-class ProductSerializer(serializers.ModelSerializer):
-
-   class Meta:
-       model = Product
-       fields = '__all__'
-
-
 class CategorySerializer(serializers. ModelSerializer):
 
-   class Meta:
+    class Meta:
         model = Category
         fields = '__all__'
 
@@ -46,9 +40,24 @@ class ProductRatingSerializer(serializers.ModelSerializer):
         model = ProductRating
         fields = '__all__'
 
+
 class CompanySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Company
         fields = "__all__"
 
+
+class ImageProductSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ProductImage
+        fields = "__all__"
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    product_image = ImageProductSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Product
+        fields = '__all__'

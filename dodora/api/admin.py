@@ -61,4 +61,6 @@ class StoreAdmin(admin.ModelAdmin):
 class ProductGroupAdmin(admin.ModelAdmin):
     pass
 
-
+@admin.register(ProductImage)
+class ProductImageAdmin(admin.ModelAdmin):
+    pass

@@ -30,15 +30,11 @@ class ShopViewSet(viewsets.ModelViewSet):
     queryset = Shop.objects.all()
 
 
-
-
 class CompanyViewSet(mixins.ListModelMixin, mixins.RetrieveModelMixin,
                      mixins.UpdateModelMixin, viewsets.GenericViewSet):
     serializer_class = CompanySerializer
     queryset = Company.objects.all()
 
-    def get_queryset(self):
-        return Company.objects.filter(pk=self.request.user.company.pk)
 
 
 # Create your views here.

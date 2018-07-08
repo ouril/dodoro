@@ -52,7 +52,6 @@ class ProductType(Comercia):
     unit_product = models.ForeignKey(Unit, on_delete=models.DO_NOTHING)
     min_package = models.IntegerField(default=1, verbose_name="Minimum in package")
 
-
 class Product(TimeStampedModel):
     id = models.UUIDField(
         primary_key=True,
@@ -182,3 +181,9 @@ class ProductGroup(models.Model):
     )
     name = models.CharField(max_length=64, verbose_name="Name of group")
     description = models.TextField(blank=True, default="", verbose_name="Description of group")
+
+
+class ProductImage(TimeStampedModel):
+    image = models.ImageField()
+    product = models.ForeignKey(Product, verbose_name="Product", on_delete=models.CASCADE)
+    index = models.PositiveSmallIntegerField(default=0, verbose_name="Index")
